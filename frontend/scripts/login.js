@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 console.log('Registration successful', data)
                 // Optionally, redirect to login page or show success message
+                window.location.href = '/dashboard.html'
             } else {
                 showErrorPopup(data.msg)
                 console.error('Registration failed', data.msg)
