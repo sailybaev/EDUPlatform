@@ -9,19 +9,28 @@ document.addEventListener('DOMContentLoaded', () => {
     loadReadingProgress();
     loadUpcomingTasks();
     loadAcademicPerformance();
+
+    document.querySelector('.logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        logout();
+    });
+
 });
 
 async function loadUserProfile() {
     try {
-        const response = await fetch('http://localhost:3000/api/user/profile', {
+        const response = await fetch('http://localhost:3000/api/dashboardst/user/profile', {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
         });
         const user = await response.json();
         
-        document.querySelector('.card-title.mb-1').textContent = `${user.name} ${user.surname}`;
-        document.querySelector('.card-text.text-muted.mb-2').textContent = `${user.school || 'School'} | ${user.class || 'Class'}`;
+        const studentNameElement = document.getElementById('studentName');
+        const studentDetailsElement = document.getElementById('studentDetails');
+        
+        studentNameElement.textContent = `${user.user.name} ${user.user.surname}`;
+        studentDetailsElement.textContent = `${user.user.school || 'School'} | ${user.user.class || 'Class'}`;
     } catch (error) {
         console.error('Error loading profile:', error);
     }
@@ -29,21 +38,21 @@ async function loadUserProfile() {
 
 async function loadReadingProgress() {
     try {
-        const response = await fetch('http://localhost:3000/api/reading/progress', {
+        const response = await fetch('http://localhost:3000/api/dashboardst/reading/progress', {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
         });
         const progress = await response.json();
         
-        const progressBar = document.querySelector('.progress-bar');
-        const booksRead = document.querySelector('p.mb-1');
+        const progressBarElement = document.getElementById('readingProgressBar');
+        const booksReadElement = document.getElementById('booksReadCount');
         
         if (progress.totalBooks > 0) {
             const percentage = (progress.completedBooks / progress.totalBooks) * 100;
-            progressBar.style.width = `${percentage}%`;
-            progressBar.textContent = `${percentage}%`;
-            booksRead.textContent = `${progress.completedBooks} books read`;
+            progressBarElement.style.width = `${percentage}%`;
+            progressBarElement.textContent = `${percentage}%`;
+            booksReadElement.textContent = `${progress.completedBooks} books read`;
         }
     } catch (error) {
         console.error('Error loading reading progress:', error);
@@ -52,7 +61,7 @@ async function loadReadingProgress() {
 
 async function loadUpcomingTasks() {
     try {
-        const response = await fetch('http://localhost:3000/api/tasks/upcoming', {
+        const response = await fetch('http://localhost:3000/api/dashboardst/tasks/upcoming', {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
@@ -85,15 +94,26 @@ function getDaysLeft(dueDate) {
 
 async function loadAcademicPerformance() {
     try {
-        const response = await fetch('http://localhost:3000/api/exams/performance', {
+        const response = await fetch('http://localhost:3000/api/dashboardst/exams/performance', {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
         });
-        const performance = await response.json();
         
-        // Update performance cards here
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+            console.log('Performance data:', data.performance);
+        }
     } catch (error) {
         console.error('Error loading performance:', error);
     }
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = './login.html';
 }

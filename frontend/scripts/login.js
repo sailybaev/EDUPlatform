@@ -80,11 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json()
             if (response.ok) {
-                console.log('Registration successful', data)
-                window.location.href = './dashboard.html' // Corrected path
+                console.log('Registration successful', data);
+                localStorage.setItem('token', data.token);
+                window.location.href = './dashboard.html';
             } else {
-                showErrorPopup(data.msg)
-                console.error('Registration failed', data.msg)
+                showErrorPopup(data.msg);
+                console.error('Registration failed', data.msg);
             }
         } catch (error) {
             console.error('Error:', error)
