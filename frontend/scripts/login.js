@@ -81,8 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json()
             if (response.ok) {
                 console.log('Registration successful', data)
-                // Optionally, redirect to login page or show success message
-                window.location.href = '/dashboard.html'
+                window.location.href = './dashboard.html' // Corrected path
             } else {
                 showErrorPopup(data.msg)
                 console.error('Registration failed', data.msg)
@@ -115,8 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 console.log('Login successful', data)
                 localStorage.setItem('token', data.token)
-                // Optionally, redirect to dashboard or home page
-                window.location.href = '/dashboard.html'
+                window.location.href = './dashboard.html' // Corrected path
             } else {
                 showErrorPopup(data.msg)
                 console.error('Login failed', data.msg)
