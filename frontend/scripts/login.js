@@ -1,3 +1,6 @@
+// #TODO: add server side IP address
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
 /*=============== SHOW HIDE PASSWORD LOGIN ===============*/
 const passwordAccess = (loginPass, loginEye) =>{
     const input = document.getElementById(loginPass),
@@ -115,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 console.log('Login successful', data)
                 localStorage.setItem('token', data.token)
-                window.location.href = './dashboard.html' // Corrected path
+                window.location.href = './dashboard.html' 
             } else {
                 showErrorPopup(data.msg)
                 console.error('Login failed', data.msg)

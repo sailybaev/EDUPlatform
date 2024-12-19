@@ -1,3 +1,7 @@
+// TODO: add server side IP address
+
+const API_BASE_URL = CONFIG.API_BASE_URL;
+
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -19,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadUserProfile() {
     try {
-        const response = await fetch('http://localhost:3000/api/dashboardst/user/profile', {
+        const response = await fetch(`${API_BASE_URL}/api/dashboardst/user/profile`, {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
@@ -38,7 +42,7 @@ async function loadUserProfile() {
 
 async function loadReadingProgress() {
     try {
-        const response = await fetch('http://localhost:3000/api/dashboardst/reading/progress', {
+        const response = await fetch(`${API_BASE_URL}/api/dashboardst/reading/progress`, {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
@@ -61,7 +65,7 @@ async function loadReadingProgress() {
 
 async function loadUpcomingTasks() {
     try {
-        const response = await fetch('http://localhost:3000/api/dashboardst/tasks/upcoming', {
+        const response = await fetch(`${API_BASE_URL}/api/dashboardst/tasks/upcoming`, {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
@@ -94,7 +98,7 @@ function getDaysLeft(dueDate) {
 
 async function loadAcademicPerformance() {
     try {
-        const response = await fetch('http://localhost:3000/api/dashboardst/exams/performance', {
+        const response = await fetch(`${API_BASE_URL}/api/dashboardst/exams/performance`, {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
