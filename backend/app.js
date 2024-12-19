@@ -1,41 +1,45 @@
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+// Import routes
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
-const mongoose = require('mongoose');
-const express = require('express');
 const auth = require('./middleware/auth');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Security Middleware
+app.use(express.json({ limit: '20kb' }));
 app.use(cors({
-    origin: [
-        'http://localhost:5500',
-        'http://127.0.0.1:5500',
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        'https://eduplatform-c8bs.onrender.com'
-    ],
+    origin: process.env.ALLOWED_ORIGINS.split(','),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'x-auth-token'],
     credentials: true
 }));
-app.options('*', cors());
 
-app.use(express.json());
+// Security Headers
+app.use((req, res, next) => {
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    next();
+});
+
+app.options('*', cors());
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/dashboardst', dashboardRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Protected route middleware
-app.get('/pages/dashboard.html', auth, (req, res, next) => {
-    next();
+app.get('/pages/dashboard.html', auth, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/dashboard.html'));
 });
 
 // Redirect middleware
@@ -50,13 +54,24 @@ app.use((req, res, next) => {
 app.use((req, res) => {
     if (req.accepts('html')) {
         res.status(404).sendFile(path.join(__dirname, '../frontend/pages/404.html'));
-    } else {
-        res.status(404).json({ message: 'Not found' });
+        return;
     }
+    res.status(404).json({ msg: 'Not Found' });
 });
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+});
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+});
