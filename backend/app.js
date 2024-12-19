@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/dashboardst', dashboardRoutes);
 
 // Protected route middleware
 app.get('/pages/dashboard.html', auth, (req, res) => {
