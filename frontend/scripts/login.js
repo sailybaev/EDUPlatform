@@ -1,7 +1,6 @@
 // #TODO: add server side IP address
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
-
 /*=============== SHOW HIDE PASSWORD LOGIN ===============*/
 const passwordAccess = (loginPass, loginEye) =>{
     const input = document.getElementById(loginPass),
@@ -74,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('passwordCreate').value
 
         try {
-            const response = await fetch('http://127.0.0.1:3000/api/auth/register', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -107,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value
 
         try {
-            const response = await fetch('http://127.0.0.1:3000/api/auth/login', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
