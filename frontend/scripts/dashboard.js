@@ -1,5 +1,3 @@
-// TODO: add server side IP address
-
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadUserProfile();
     loadReadingProgress();
-    loadUpcomingTasks();
-    loadAcademicPerformance();
+    loadUpcomingEvents();
+    loadPerformanceCards();
 
     document.querySelector('.logout').addEventListener('click', (e) => {
         e.preventDefault();
@@ -63,31 +61,6 @@ async function loadReadingProgress() {
     }
 }
 
-async function loadUpcomingTasks() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/dashboardst/tasks/upcoming`, {
-            headers: {
-                'x-auth-token': localStorage.getItem('token')
-            }
-        });
-        const tasks = await response.json();
-        
-        const tasksContainer = document.querySelector('.d-flex.overflow-auto');
-        tasksContainer.innerHTML = tasks.map(task => `
-            <div class="card text-center" style="min-width: 200px; flex: 0 0 auto; border: 1px solid #ddd; border-radius: 8px;">
-                <div class="card-header text-white" style="background-color: #007bff; border-radius: 8px 8px 0 0;">
-                    ${new Date(task.dueDate).toLocaleDateString()}
-                </div>
-                <div class="card-body">
-                    <h6 class="card-title">${task.title}</h6>
-                    <p class="card-text"><small class="text-muted">${getDaysLeft(task.dueDate)} day(s) left</small></p>
-                </div>
-            </div>
-        `).join('');
-    } catch (error) {
-        console.error('Error loading tasks:', error);
-    }
-}
 
 function getDaysLeft(dueDate) {
     const now = new Date();
@@ -96,24 +69,51 @@ function getDaysLeft(dueDate) {
     return diff > 0 ? diff : 0;
 }
 
-async function loadAcademicPerformance() {
+
+async function loadUpcomingEvents() {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/dashboardst/exams/performance`, {
+        const response = await fetch(`${API_BASE_URL}/api/dashboardst/events/upcoming`, {
             headers: {
                 'x-auth-token': localStorage.getItem('token')
             }
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
         const data = await response.json();
-        if (data.success) {
-            console.log('Performance data:', data.performance);
-        }
+        const eventsContainer = document.getElementById('upcomingEventsContainer');
+
+        eventsContainer.innerHTML = data.events.map(event => `
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">${event.title}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${new Date(event.date).toLocaleDateString()}</h6>
+                    <p class="card-text">${event.description}</p>
+                </div>
+            </div>
+        `).join('');
     } catch (error) {
-        console.error('Error loading performance:', error);
+        console.error('Error loading upcoming events:', error);
+    }
+}
+
+async function loadPerformanceCards() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/dashboardst/performance`, {
+            headers: {
+                'x-auth-token': localStorage.getItem('token')
+            }
+        });
+        const data = await response.json();
+        const performanceContainer = document.getElementById('performanceCardsContainer');
+
+        performanceContainer.innerHTML = data.performance.map(item => `
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">${item.subject}</h5>
+                    <p class="card-text">Score: ${item.score}%</p>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading performance cards:', error);
     }
 }
 

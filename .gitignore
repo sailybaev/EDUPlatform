@@ -9,3 +9,6 @@ dist
 dist-ssr
 
 /node_modules/
+.idea/workspace.xml
+
+backend/seed.js

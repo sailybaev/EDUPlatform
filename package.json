@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "backend/app.js",
   "scripts": {
-    "dev": "nodemon backend/app.js"
+    "dev": "nodemon backend/app.js",
+    "seed": "node backend/seed.js"
   },
   "keywords": [],
   "author": "",
