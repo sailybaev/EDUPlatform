@@ -1,10 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../styles/profile.css">
+    <title>EduPlatform Dashboard</title>
 </head>
-<body>
 
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar" style="position: fixed; height: 100vh;">
+                <h1 class="h2" id="sidename">EduPlatform</h1>
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="bi bi-book"></i> My courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-clipboard-check"></i> Assignment
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-graph-up"></i> Performance
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-calendar3"></i> Schedule
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" >
+                                <i class="bi bi-person"></i> Profile/Setings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link logout" href="#" style="color: red;">
+                                <i class="bi bi-box-arrow-right text-danger"></i> Logout
+                            </a>
+                        
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Header Section -->
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Profile</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <!-- Add system controls here -->
+                    </div>
+                </div>
+
+                <!-- Profile Card Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row col-md-12">
+                            <div class="card-body d-flex align-items-center">
+                                <img src="https://cdn.prod.website-files.com/65b3cc40daa94fa5529af155/65b3cc40daa94fa5529af285_Bryan-image%20(1).jpeg"
+                                    alt="Student Profile" class="rounded-circle me-3"
+                                    style="width: 80px; height: 80px; object-fit: cover;">
+                                <div>
+                                    <h5 id="studentName" class="card-title mb-1">Student Name</h5>
+                                    <p id="studentDetails" class="card-text text-muted mb-2">School | Class</p>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="padding-left: 110px;">
+                                <div class="row col-md-12">
+                                    <div class="col-md-4">
+                                        <p id="email"><strong>Email:</strong> addres@gmail.com</p>
+                                        <p id="iin"><strong>IIN:</strong> 034502251451</p>
+                                        <p id="birthday"><strong>Birthday:</strong> 10 July 2005</p>
+                                        <hr style="width: 50vw;"> 
+                                        <p style="font-weight: 600;">Change your password</p>
+                                        <input type="text" required placeholder="Old password" id="oldpassword">
+                                        <input type="text" required placeholder="New password" id="newpassword">
+                                        
+                                        <button id="changepassword"><i class="bi bi-pen"></i>Save new password </button>
+
+
+                                        
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p id="phonenumber"><strong>Phone:</strong> +7 747 592 1263</p>
+                                        <p id="classnumber"><strong>Class:</strong> 2</p>
+                                        <p id="status"><strong>Status:</strong> Student</p>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script type="module" src="../scripts/profile.js"></script>
 </body>
+
 </html>
