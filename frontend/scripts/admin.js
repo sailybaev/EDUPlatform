@@ -411,14 +411,23 @@ async function loadCoursesTable() {
 
                 // Initialize tooltip
                 const tooltip = tr.querySelector('[data-bs-toggle="tooltip"]');
-                new bootstrap.Tooltip(tooltip);
+                const edt= tr.querySelector('.edit-btn');
+                const delBtn = tr.querySelector('.delete-btn');
+                
+                edt.addEventListener('click', () => {
+                    editCourse(course._id);
+                });
+
+                delBtn.addEventListener('click', () => {
+                    deleteCourse(course._id)
+                });
             });
         }
     } catch (error) {
         console.error('Error:', error);
         alert('Failed to load courses');
     }
-}
+};
 
 // Add course management functions
 async function editCourse(courseId) {
