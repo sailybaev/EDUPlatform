@@ -27,7 +27,8 @@ exports.getUserProfile = async (req, res) => {
                 school: user.school,
                 class: user.class,
                 readingGoal: user.readingGoal,
-                createdAt: user.createdAt
+                createdAt: user.createdAt,
+                who: user.who
             }
         });
 

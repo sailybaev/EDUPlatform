@@ -8,6 +8,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const auth = require('./middleware/auth');
+const adminRoutes = require('./routes/admin'); // New route
 
 const app = express();
 
@@ -36,6 +37,8 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboardst', dashboardRoutes);
+app.use('/api/admin', adminRoutes); 
+
 
 // Protected route middleware
 app.get('/pages/dashboard.html', auth, (req, res) => {
