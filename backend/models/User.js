@@ -9,7 +9,13 @@ const UserSchema = new mongoose.Schema({
     school: { type: String },
     class: { type: String },
     readingGoal: { type: Number, default: 10 },
-    createdAt: { type: Date, default: Date.now }
+    courses: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Course',
+        required: false 
+    }], 
+    createdAt: { type: Date, default: Date.now },
+    who: { type: String, default: 'student' },
 });
 
 module.exports = mongoose.model('User', UserSchema);
