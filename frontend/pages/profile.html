@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="../styles/dashboard.css">
+    <link rel="stylesheet" href="../styles/profile.css">
     <title>EduPlatform Dashboard</title>
 </head>
 
@@ -15,9 +15,8 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar Navigation -->
-            
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar vh-100 pt-3">
-                <h1 class="h2">EduPlatform</h1>
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar" style="position: fixed; height: 100vh;">
+                <h1 class="h2" id="sidename">EduPlatform</h1>
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -41,7 +40,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="#" >
                                 <i class="bi bi-person"></i> Profile/Setings
                             </a>
                         </li>
@@ -57,17 +56,18 @@
             <!-- Main Content Area -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <!-- Header Section -->
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Dashboard</h1>
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Profile</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <!-- Add system controls here -->
                     </div>
                 </div>
 
-                <!-- User Profile and Goals Section -->
-                <div class="row mb-4">
-                    <div class="col-md-5">
-                        <div class="card" style="height: 166px;">
+                <!-- Profile Card Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row col-md-12">
                             <div class="card-body d-flex align-items-center">
                                 <img src="https://cdn.prod.website-files.com/65b3cc40daa94fa5529af155/65b3cc40daa94fa5529af285_Bryan-image%20(1).jpeg"
                                     alt="Student Profile" class="rounded-circle me-3"
@@ -75,50 +75,38 @@
                                 <div>
                                     <h5 id="studentName" class="card-title mb-1">Student Name</h5>
                                     <p id="studentDetails" class="card-text text-muted mb-2">School | Class</p>
-                                    <button class="btn btn-primary btn-sm">View Profile</button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                            <div class="col-md-12" style="padding-left: 110px;">
+                                <div class="row col-md-12">
+                                    <div class="col-md-4">
+                                        <p id="email"><strong>Email:</strong> addres@gmail.com</p>
+                                        <p id="iin"><strong>IIN:</strong> 034502251451</p>
+                                        <p id="birthday"><strong>Birthday:</strong> 10 July 2005</p>
+                                        <hr style="width: 50vw;"> 
+                                        <p style="font-weight: 600;">Change your password</p>
+                                        <input type="text" required placeholder="Old password" id="oldpassword">
+                                        <input type="text" required placeholder="New password" id="newpassword">
+                                        
+                                        <button id="changepassword"><i class="bi bi-pen"></i>Save new password </button>
 
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Reading Progress</h5>
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <div class="progress flex-grow-1 me-3" style="height: 20px;">
-                                        <div id="readingProgressBar" class="progress-bar" role="progressbar" style="width: 0%;"
-                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+
+                                        
                                     </div>
-                                    <button class="btn btn-outline-primary btn-sm">Add New Book</button>
-                                </div>
-                                <div class="text-center">
-                                    <p id="booksReadCount" class="mb-1">0 books read</p>
-                                    <p class="mb-0">Goal: 10 books/year</p>
+                                    <div class="col-md-4">
+                                        <p id="phonenumber"><strong>Phone:</strong> +7 747 592 1263</p>
+                                        <p id="classnumber"><strong>Class:</strong> 2</p>
+                                        <p id="status"><strong>Status:</strong> Student</p>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
-                    <!-- Upcoming Events Section -->
-                    <div class="col-md-6 mt-5">
-                        <h3>Upcoming Events</h3>
-                        <div id="upcomingEventsContainer" class="d-flex flex-wrap gap-3 flex-row">
-                                <!-- Event cards will be dynamically loaded here -->
-                        </div>
-                    </div>
-
-
-
-                    <!-- Academic Performance Section -->
-                    <div class="col-md-6 mt-5">
-                        <h3>Academic Performance</h3>
-                        <div id="performanceCardsContainer" class="d-flex flex-column gap-3">
-                            <!-- Performance cards will be dynamically loaded here -->
-                        </div>
-                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
 
 
 
@@ -129,9 +117,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <script type="module" src="../scripts/config.js"></script>
-    <script type="module" src="../scripts/dashboard.js"></script>
-    
+
+    <script type="module" src="../scripts/profile.js"></script>
 </body>
 
 </html>

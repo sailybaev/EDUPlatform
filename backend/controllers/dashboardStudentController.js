@@ -1,7 +1,7 @@
 const User = require('../models/User');
-const Task = require('../models/Task');
 const ReadingProgress = require('../models/ReadingProgress');
-const Exam = require('../models/Exam.js'); 
+const Performance = require('../models/Perfomance.js');
+const Event = require('../models/Event.js');
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
@@ -64,34 +64,18 @@ exports.getReadingProgress = async (req, res) => {
     }
 };
 
-//get exam perfomance
-exports.getExamPerformance = async (req, res) => {
-    try {
-        const performance = await Exam.find({ 
-            user: req.user.id 
-        })
-        .sort({ date: -1 })
-        .limit(5)
-        .select('subject date location notes');
 
-        if (!performance) {
-            return res.status(404).json({
-                success: false,
-                message: 'No exam performance found'
-            });
-        }
+// Get performance data
+exports.getPerformanceData = async (req, res) => {
+    try {
+        const performance = await Performance.find({ user: req.user.id });
 
         res.json({
             success: true,
-            performance: performance.map(exam => ({
-                subject: exam.subject,
-                date: exam.date,
-                location: exam.location,
-                notes: exam.notes
-            }))
+            performance
         });
     } catch (error) {
-        console.error('Performance fetch error:', error);
+        console.error('Error fetching performance data:', error);
         res.status(500).json({ 
             success: false, 
             message: 'Server error',
@@ -100,19 +84,27 @@ exports.getExamPerformance = async (req, res) => {
     }
 };
 
-// Get upcoming tasks
-exports.getUpcomingTasks = async (req, res) => {
-    try {
-        const tasks = await Task.find({
-            user: req.user.id,
-            dueDate: { $gte: new Date() }
-        })
-        .sort({ dueDate: 1 })
-        .limit(5);
 
-        res.json(tasks);
+// Get upcoming events
+exports.getUpcomingEvents = async (req, res) => {
+    try {
+        console.log('Fetching events for user ID:', req.user.id);
+        const events = await Event.find({ 
+            user: req.user.id
+        }).sort({ date: 1 }).limit(10);
+
+        console.log('Found events:', events);
+
+        res.json({
+            success: true,
+            events
+        });
     } catch (error) {
-        console.error('Tasks fetch error:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error fetching events:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error',
+            error: error.message 
+        });
     }
 };

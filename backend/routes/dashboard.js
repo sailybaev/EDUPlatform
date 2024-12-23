@@ -9,9 +9,11 @@ router.get('/user/profile', auth, dashboardController.getUserProfile);
 // Get reading progress
 router.get('/reading/progress', auth, dashboardController.getReadingProgress);
 
-// Get upcoming tasks
-router.get('/tasks/upcoming', auth, dashboardController.getUpcomingTasks);
+// Get upcoming events
+router.get('/events/upcoming', auth, dashboardController.getUpcomingEvents);
 
-// Get perfomance
-router.get('/exams/performance', auth, dashboardController.getExamPerformance);
+// Get performance data
+router.get('/performance', auth, dashboardController.getPerformanceData);
+
+
 module.exports = router;
