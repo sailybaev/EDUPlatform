@@ -15,5 +15,8 @@ router.get('/events/upcoming', auth, dashboardController.getUpcomingEvents);
 // Get performance data
 router.get('/performance', auth, dashboardController.getPerformanceData);
 
+// Change password
+router.post('/user/change-password', auth, dashboardController.changePassword);
+
 
 module.exports = router;

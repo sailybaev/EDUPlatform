@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
         logout();
     });
 
+    document.querySelector('#view-profile').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = '/pages/profile.html';
+    });
+
 });
 
 async function loadUserProfile() {
@@ -121,3 +126,4 @@ function logout() {
     localStorage.removeItem('token');
     window.location.href = './login.html';
 }
+
