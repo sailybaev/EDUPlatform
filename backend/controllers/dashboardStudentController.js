@@ -2,7 +2,7 @@ const User = require('../models/User');
 const ReadingProgress = require('../models/ReadingProgress');
 const Performance = require('../models/Perfomance.js');
 const Event = require('../models/Event.js');
-
+const bcrypt = require('bcryptjs');
 // Get user profile
 exports.getUserProfile = async (req, res) => {
     try {
@@ -19,15 +19,17 @@ exports.getUserProfile = async (req, res) => {
         res.json({
             success: true,
             user: {
-                id: user._id,
                 name: user.name,
                 surname: user.surname,
                 email: user.email,
+                phoneNum: user.phoneNum,
+                IIN: user.IIN,
                 profilePicture: user.profilePicture,
                 school: user.school,
                 class: user.class,
                 readingGoal: user.readingGoal,
-                createdAt: user.createdAt
+                createdAt: user.createdAt,
+                who: user.who
             }
         });
 
@@ -101,6 +103,33 @@ exports.getUpcomingEvents = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching events:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error',
+            error: error.message 
+        });
+    }
+};
+
+
+exports.changePassword = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
+        
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid password' });
+        }   
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(req.body.newPassword, salt);
+        await user.save();
+        res.json({ message: 'Password changed successfully' });
+    } catch (error) {
+        console.error('Error changing password:', error);
         res.status(500).json({ 
             success: false, 
             message: 'Server error',

@@ -118,7 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 console.log('Login successful', data)
                 localStorage.setItem('token', data.token)
-                window.location.href = './dashboard.html' 
+                if(data.who === 'admin'){
+                    window.location.href = './admin.html'
+                } 
+                else{
+                    window.location.href = './dashboard.html'
+                }
             } else {
                 showErrorPopup(data.msg)
                 console.error('Login failed', data.msg)

@@ -42,7 +42,7 @@ exports.login = async (req, res) => {
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ msg: 'Invalid credentials' });
+            return res.status(400).json({ msg: 'No User' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -50,11 +50,11 @@ exports.login = async (req, res) => {
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
 
-        const payload = { user: { id: user.id } };
+        const payload = { user: { id: user.id , who: user.who } };
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
             if (err) throw err;
-            res.json({ token });
+            res.json({ token , who: user.who });
         });
     } catch (err) {
         console.error(err.message);
