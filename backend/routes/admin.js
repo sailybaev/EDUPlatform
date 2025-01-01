@@ -30,4 +30,13 @@ router.get('/courses', auth, checkAdmin, adminController.getAllCourses);
 router.delete('/courses/:id', auth , checkAdmin , adminController.deleteCourse);
 
 router.put('/courses/:id', auth, checkAdmin, adminController.updateCourse);
+
+// Ticket routes
+router.get('/tickets', auth, checkAdmin, adminController.getAllTickets);
+router.get('/tickets/:id', auth, checkAdmin, adminController.getTicketDetails);
+router.put('/tickets/:id/accept', auth, checkAdmin, adminController.acceptTicket);
+router.put('/tickets/:id/reject', auth, checkAdmin, adminController.rejectTicket);
+router.put('/tickets/:id/complete', auth, checkAdmin, adminController.completeTicket);
+router.post('/tickets/:id/respond', auth, checkAdmin, adminController.respondToTicket);
+
 module.exports = router;
