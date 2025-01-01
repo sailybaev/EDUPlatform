@@ -3,6 +3,7 @@ const ReadingProgress = require('../models/ReadingProgress');
 const Performance = require('../models/Perfomance.js');
 const Event = require('../models/Event.js');
 const bcrypt = require('bcryptjs');
+const Ticket = require('../models/Ticket');
 // Get user profile
 exports.getUserProfile = async (req, res) => {
     try {
@@ -130,6 +131,97 @@ exports.changePassword = async (req, res) => {
         res.json({ message: 'Password changed successfully' });
     } catch (error) {
         console.error('Error changing password:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error',
+            error: error.message 
+        });
+    }
+};
+
+// Create new ticket
+exports.createTicket = async (req, res) => {
+    try {
+        const { subject, description, priority } = req.body;
+        const ticket = new Ticket({
+            user: req.user.id,
+            subject,
+            description,
+            priority
+        });
+        await ticket.save();
+        res.json({ success: true, ticket });
+    } catch (error) {
+        console.error('Error creating ticket:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error',
+            error: error.message 
+        });
+    }
+};
+
+// Get user tickets
+exports.getUserTickets = async (req, res) => {
+    try {
+        const tickets = await Ticket.find({ user: req.user.id })
+            .sort({ createdAt: -1 });
+        res.json({ success: true, tickets });
+    } catch (error) {
+        console.error('Error fetching tickets:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error',
+            error: error.message 
+        });
+    }
+};
+
+// Get ticket details
+exports.getTicketDetails = async (req, res) => {
+    try {
+        const ticket = await Ticket.findById(req.params.id)
+            .populate('user', 'name surname email')
+            .populate('responses.responder', 'name surname who');
+        
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+
+        if (ticket.user._id.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Not authorized' });
+        }
+
+        res.json({ success: true, ticket });
+    } catch (error) {
+        console.error('Error fetching ticket details:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error',
+            error: error.message 
+        });
+    }
+};
+
+// Respond to ticket
+exports.respondToTicket = async (req, res) => {
+    try {
+        const { message } = req.body;
+        const ticket = await Ticket.findById(req.params.id);
+        
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+
+        ticket.responses.push({
+            responder: req.user.id,
+            message
+        });
+
+        await ticket.save();
+        res.json({ success: true, ticket });
+    } catch (error) {
+        console.error('Error responding to ticket:', error);
         res.status(500).json({ 
             success: false, 
             message: 'Server error',
