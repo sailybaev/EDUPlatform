@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboardst', dashboardRoutes);
 app.use('/api/admin', adminRoutes); 
-
+app.use('/api/pricing', require('./routes/pricing'));
 
 // Protected route middleware
 app.get('/pages/dashboard.html', auth, (req, res) => {
@@ -48,7 +48,7 @@ app.get('/pages/dashboard.html', auth, (req, res) => {
 // Redirect middleware
 app.use((req, res, next) => {
     if (req.path === '/') {
-        return res.redirect('/pages/login.html');
+        return res.redirect('/pages/home.html');
     }
     next();
 });

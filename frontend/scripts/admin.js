@@ -26,6 +26,8 @@ async function initializeAdminPanel() {
         await loadCourses();
         await loadUsers();
         await loadCoursesTable();
+        await loadTickets();
+        await loadPricingPlans();
         initializeEventListeners();
     } catch (error) {
         console.error('Failed to initialize admin panel:', error);
@@ -507,4 +509,382 @@ function sanitizeHTML(str) {
         "'": '&#39;',
         '"': '&quot;'
     }[tag]));
+}
+
+async function loadTickets() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/tickets`, {
+            headers: {
+                'x-auth-token': localStorage.getItem('token')
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            const ticketsTableBody = document.getElementById('ticketsTableBody');
+            ticketsTableBody.innerHTML = '';
+
+            data.tickets.forEach(ticket => {
+                const tr = document.createElement('tr');
+                const createdDate = new Date(ticket.createdAt).toLocaleDateString();
+                
+                tr.innerHTML = `
+                    <td>${sanitizeHTML(ticket.user.name)} ${sanitizeHTML(ticket.user.surname)}</td>
+                    <td>${sanitizeHTML(ticket.subject)}</td>
+                    <td>${sanitizeHTML(ticket.description)}</td>
+                    <td><span class="badge bg-${getStatusBadgeColor(ticket.status)}">${ticket.status}</span></td>
+                    <td><span class="badge bg-${getPriorityBadgeColor(ticket.priority)}">${ticket.priority}</span></td>
+                    <td>${createdDate}</td>
+                    <td>
+                        ${ticket.status === 'open' ? `
+                            <button class="btn btn-sm btn-success accept-ticket" data-ticket-id="${ticket._id}">Accept</button>
+                            <button class="btn btn-sm btn-danger reject-ticket" data-ticket-id="${ticket._id}">Reject</button>
+                        ` : ticket.status === 'in-progress' ? `
+                            <button class="btn btn-sm btn-success complete-ticket" data-ticket-id="${ticket._id}">Complete</button>
+                        ` : ''}
+                        <button class="btn btn-sm btn-primary view-ticket" data-ticket-id="${ticket._id}">View</button>
+                    </td>
+                `;
+
+                ticketsTableBody.appendChild(tr);
+
+                // Add event listeners for the buttons
+                const acceptBtn = tr.querySelector('.accept-ticket');
+                const rejectBtn = tr.querySelector('.reject-ticket');
+                const viewBtn = tr.querySelector('.view-ticket');
+                const completeBtn = tr.querySelector('.complete-ticket');
+
+                if (acceptBtn) {
+                    acceptBtn.addEventListener('click', () => handleTicket(ticket._id, 'accept'));
+                }
+                if (rejectBtn) {
+                    rejectBtn.addEventListener('click', () => handleTicket(ticket._id, 'reject'));
+                }
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', () => viewTicket(ticket._id));
+                }
+                if (completeBtn) {
+                    completeBtn.addEventListener('click', () => completeTicket(ticket._id));
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to load tickets');
+    }
+}
+
+function getStatusBadgeColor(status) {
+    const colors = {
+        'open': 'warning',
+        'in-progress': 'info',
+        'closed': 'secondary'
+    };
+    return colors[status] || 'secondary';
+}
+
+function getPriorityBadgeColor(priority) {
+    const colors = {
+        'low': 'success',
+        'medium': 'warning',
+        'high': 'danger'
+    };
+    return colors[priority] || 'secondary';
+}
+
+async function handleTicket(ticketId, action) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/tickets/${ticketId}/${action}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert(`Ticket ${action}ed successfully`);
+            loadTickets();
+        } else {
+            alert(data.message || `Failed to ${action} ticket`);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`Failed to ${action} ticket`);
+    }
+}
+
+async function viewTicket(ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/tickets/${ticketId}`, {
+            headers: {
+                'x-auth-token': localStorage.getItem('token')
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showTicketModal(data.ticket);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to load ticket details');
+    }
+}
+
+function showTicketModal(ticket) {
+    const modalHtml = `
+        <div class="modal fade" id="ticketModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ticket Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <strong>Subject:</strong> ${sanitizeHTML(ticket.subject)}
+                        </div>
+                        <div class="mb-3">
+                            <strong>Description:</strong>
+                            <p>${sanitizeHTML(ticket.description)}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Status:</strong> 
+                            <span class="badge bg-${getStatusBadgeColor(ticket.status)}">${ticket.status}</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Priority:</strong>
+                            <span class="badge bg-${getPriorityBadgeColor(ticket.priority)}">${ticket.priority}</span>
+                        </div>
+                        <hr>
+                        <h6>Responses</h6>
+                        <div class="ticket-responses mb-3">
+                            ${ticket.responses.map(response => `
+                                <div class="card mb-2">
+                                    <div class="card-body">
+                                        <p class="card-text">${sanitizeHTML(response.message)}</p>
+                                        <small class="text-muted">
+                                            By ${response.responder.name} on ${new Date(response.createdAt).toLocaleString()}
+                                        </small>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Add Response</label>
+                            <textarea class="form-control" id="ticketResponse" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="sendResponse">Send Response</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('ticketModal'));
+    modal.show();
+
+    document.getElementById('sendResponse').addEventListener('click', () => {
+        const response = document.getElementById('ticketResponse').value;
+        if (response.trim()) {
+            sendTicketResponse(ticket._id, response);
+        }
+    });
+
+    document.getElementById('ticketModal').addEventListener('hidden.bs.modal', function () {
+        this.remove();
+    });
+}
+
+async function sendTicketResponse(ticketId, message) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/tickets/${ticketId}/respond`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert('Response sent successfully');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('ticketModal'));
+            modal.hide();
+            loadTickets();
+        } else {
+            alert(data.message || 'Failed to send response');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to send response');
+    }
+}
+
+async function completeTicket(ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/tickets/${ticketId}/complete`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert('Ticket marked as completed');
+            loadTickets();
+        } else {
+            alert(data.message || 'Failed to complete ticket');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to complete ticket');
+    }
+}
+
+async function loadPricingPlans() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/pricing`, {
+            headers: {
+                'x-auth-token': localStorage.getItem('token')
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            const pricingTableBody = document.getElementById('pricingTableBody');
+            pricingTableBody.innerHTML = '';
+
+            data.plans.forEach(plan => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${sanitizeHTML(plan.name)}</td>
+                    <td>${plan.price}</td>
+                    <td>
+                        <ul class="list-unstyled">
+                            ${plan.features.map(feature => 
+                                `<li>${sanitizeHTML(feature)}</li>`
+                            ).join('')}
+                        </ul>
+                    </td>
+                    <td>${sanitizeHTML(plan.buttonText)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary edit-pricing" 
+                                data-plan-id="${plan._id}">
+                            Edit
+                        </button>
+                    </td>
+                `;
+
+                pricingTableBody.appendChild(tr);
+
+                // Add event listener for edit button
+                const editBtn = tr.querySelector('.edit-pricing');
+                editBtn.addEventListener('click', () => editPricingPlan(plan));
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to load pricing plans');
+    }
+}
+
+function editPricingPlan(plan) {
+    const modalHtml = `
+        <div class="modal fade" id="editPricingModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Pricing Plan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editPricingForm">
+                            <div class="mb-3">
+                                <label class="form-label">Plan Name</label>
+                                <input type="text" class="form-control" id="planName" 
+                                       value="${sanitizeHTML(plan.name)}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Price (₸)</label>
+                                <input type="number" class="form-control" id="planPrice" 
+                                       value="${plan.price}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Features (one per line)</label>
+                                <textarea class="form-control" id="planFeatures" rows="4" required>
+                                    ${plan.features.join('\n')}
+                                </textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Button Text</label>
+                                <input type="text" class="form-control" id="buttonText" 
+                                       value="${sanitizeHTML(plan.buttonText)}">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary" id="savePricingChanges">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('editPricingModal'));
+    modal.show();
+
+    document.getElementById('savePricingChanges').addEventListener('click', async () => {
+        const updatedPlan = {
+            name: document.getElementById('planName').value,
+            price: Number(document.getElementById('planPrice').value),
+            features: document.getElementById('planFeatures').value
+                .split('\n')
+                .map(f => f.trim())
+                .filter(f => f),
+            buttonText: document.getElementById('buttonText').value
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/pricing/${plan._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-auth-token': localStorage.getItem('token')
+                },
+                body: JSON.stringify(updatedPlan)
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Pricing plan updated successfully');
+                modal.hide();
+                loadPricingPlans();
+            } else {
+                alert(data.message || 'Failed to update pricing plan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to update pricing plan');
+        }
+    });
+
+    document.getElementById('editPricingModal').addEventListener('hidden.bs.modal', function () {
+        this.remove();
+    });
 }

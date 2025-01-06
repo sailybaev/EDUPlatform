@@ -1,6 +1,9 @@
 const User = require('../models/User');
 const Course = require('../models/Course');
 const bcrypt = require('bcryptjs');
+const Ticket = require('../models/Ticket');
+const TicketDone = require('../models/TicketsDone');
+const PricingPlan = require('../models/PricingPlan');
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
@@ -138,6 +141,147 @@ exports.updateCourse = async (req, res) => {
         await course.save();
 
         res.json({ success: true, message: 'Course updated successfully', course });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Get all tickets
+exports.getAllTickets = async (req, res) => {
+    try {
+        const tickets = await Ticket.find()
+            .populate('user', 'name surname email')
+            .populate('responses.responder', 'name surname')
+            .sort({ createdAt: -1 });
+        res.json({ success: true, tickets });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Get ticket details
+exports.getTicketDetails = async (req, res) => {
+    try {
+        const ticket = await Ticket.findById(req.params.id)
+            .populate('user', 'name surname email')
+            .populate('responses.responder', 'name surname');
+        
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+        
+        res.json({ success: true, ticket });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Accept ticket
+exports.acceptTicket = async (req, res) => {
+    try {
+        const ticket = await Ticket.findById(req.params.id);
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+        
+        ticket.status = 'in-progress';
+        await ticket.save();
+        
+        res.json({ success: true, message: 'Ticket accepted' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Reject ticket
+exports.rejectTicket = async (req, res) => {
+    try {
+        const ticket = await Ticket.findById(req.params.id);
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+        
+        ticket.status = 'closed';
+        await ticket.save();
+        
+        res.json({ success: true, message: 'Ticket rejected' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Respond to ticket
+exports.respondToTicket = async (req, res) => {
+    try {
+        const ticket = await Ticket.findById(req.params.id);
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+        
+        ticket.responses.push({
+            responder: req.user.id,
+            message: req.body.message
+        });
+        
+        await ticket.save();
+        res.json({ success: true, message: 'Response added successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Complete ticket
+exports.completeTicket = async (req, res) => {
+    try {
+        const ticket = await Ticket.findById(req.params.id);
+        if (!ticket) {
+            return res.status(404).json({ success: false, message: 'Ticket not found' });
+        }
+        
+        // Create new completed ticket
+        const completedTicket = new TicketDone({
+            user: ticket.user,
+            subject: ticket.subject,
+            description: ticket.description,
+            priority: ticket.priority,
+            createdAt: ticket.createdAt,
+            responses: ticket.responses
+        });
+        
+        await completedTicket.save();
+        
+        // Delete original ticket
+        await Ticket.findByIdAndDelete(req.params.id);
+        
+        res.json({ success: true, message: 'Ticket marked as completed' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.getPricingPlans = async (req, res) => {
+    try {
+        const plans = await PricingPlan.find();
+        res.json({ success: true, plans });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.updatePricingPlan = async (req, res) => {
+    try {
+        const { name, price, features, buttonText } = req.body;
+        const plan = await PricingPlan.findByIdAndUpdate(
+            req.params.id,
+            { name, price, features, buttonText },
+            { new: true }
+        );
+        
+        if (!plan) {
+            return res.status(404).json({ success: false, message: 'Plan not found' });
+        }
+        
+        res.json({ success: true, plan });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

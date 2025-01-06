@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing</title>
+    <link rel="stylesheet" href="../styles/pricing.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+
+    <nav class="navbar_header">
+        <a href="home.html" class="navbar_brand">
+            <p class="brand_text"><span class="highlight">EDU</span>Platform</p>
+        </a>
+        <div class="navbar_collapse" id="navbarCollapse">
+            <div class="navbar_nav">
+                <a href="home.html" class="nav_link">Home</a>
+                <a href="aboutus.html" class="nav_link">About US</a>
+                <a href="pricing.html" class="nav_link active">Pricing</a>
+                <a href="features.html" class="nav_link">Features</a>
+                <a href="contactus.html" class="nav_link">Contact US</a>
+                <a href="login.html" class="nav_link"><i class="fa fa-user"></i></a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Header -->
+    <div class="page-header">
+        <div class="container">
+            <div class="row justify-center">
+                <div class="col">
+                    <h1 class="page-title">Contact Us</h1>
+                    <nav class="breadcrumb-nav">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="home.html">Home</a></li>
+                            <li class="breadcrumb-item">/</li>
+                            <li class="breadcrumb-item active" aria-current="page">Pricing</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Pricing -->
+    <div class="container pricing-container">
+        <header>
+            <div class="pricing-header">
+                <h1 class="pricing-title">Pricing</h1>
+                <p class="pricing-description">
+                    Choose a plan that fits your learning needs. Our flexible pricing ensures that education is
+                    accessible to everyone, with no hidden fees or commitments. Start learning today and unlock your
+                    potential!
+                </p>
+            </div>
+        </header>
+        <main>
+            <div class="pricing-cards">
+                <!-- Pricing cards will be dynamically loaded here -->
+            </div>
+        </main>
+    </div>
+
+
+    <!-- FAQ -->
+
+    <div class="faq-section">
+        <div class="container">
+            <div class="text-center">
+                <h1 class="faq-title">Frequently Asked Questions</h1>
+            </div>
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ('faq1')">
+                        <h4>What is the EDU Platform?</h4>
+                    </div>
+                    <div id="faq1" class="faq-answer">
+                        <p>EDU Platform is an online education platform offering a wide range of courses in technology, business, and creative fields. Whether you’re a beginner or a professional, we provide resources to help you achieve your learning and career goals.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ('faq2')">
+                        <h4>How can I track my progress in a course?</h4>
+                    </div>
+                    <div id="faq2" class="faq-answer">
+                        <p>You can track your progress directly from your dashboard. Each course has a progress bar showing how much of the course you’ve completed. Additionally, you’ll receive notifications when you reach key milestones.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ('faq3')">
+                        <h4>Will I receive a certificate after completing a course?</h4>
+                    </div>
+                    <div id="faq3" class="faq-answer">
+                        <p>Yes! All Medium and Pro plan courses include a certificate of completion that you can showcase on your LinkedIn profile, resume, or portfolio. Free courses do not offer certificates.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ('faq4')">
+                        <h4>Will I get a reminder for upcoming deadlines or exams?</h4>
+                    </div>
+                    <div id="faq4" class="faq-answer">
+                        <p>Yes, we send automatic email reminders for upcoming deadlines and exams. Additionally, you can view your course schedule, deadlines, and upcoming assessments directly in your dashboard.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ('faq5')">
+                        <h4>Is there a way to customize my learning schedule?</h4>
+                    </div>
+                    <div id="faq5" class="faq-answer">
+                        <p>Yes, our platform is flexible! You can learn at your own pace, and we offer personalized learning schedules. You can plan and adjust your study hours based on your personal preferences. Pro users can also access more advanced scheduling tools and reminders.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="aboutus.html">About US</a></li>
+                        <li><a href="contactus.html">Contact Us</a></li>
+                        <li><a href="pricing.html">Prising</a></li>
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="contactus.html">FAQs & Help</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="icon fa fa-map-marker-alt"></i>Mangilik el C1</p>
+                    <p><i class="icon fa fa-phone-alt"></i>+7 777 777 77 77</p>
+                    <p><i class="icon fa fa-envelope"></i>dreamteam@edu.kz</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"> </i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Subscribe to our Newsletter</h4>
+                    <p>Subscribe now and join our growing community of students committed to education!</p>
+                    <form action="#">
+                        <input type="email" placeholder="Your email" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function toggleFAQ(faqId) {
+            const faqAnswer = document.getElementById(faqId);
+            faqAnswer.style.display = faqAnswer.style.display === "block" ? "none" : "block";
+        }
+    </script>
+
+    <script type="module" src="../scripts/config.js"></script>
+    <script type="module" src="../scripts/pricing.js"></script>
+
+</body>
+
+</html>
