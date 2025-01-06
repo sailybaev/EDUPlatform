@@ -27,6 +27,7 @@ async function initializeAdminPanel() {
         await loadUsers();
         await loadCoursesTable();
         await loadTickets();
+        await loadPricingPlans();
         initializeEventListeners();
     } catch (error) {
         console.error('Failed to initialize admin panel:', error);
@@ -748,4 +749,142 @@ async function completeTicket(ticketId) {
         console.error('Error:', error);
         alert('Failed to complete ticket');
     }
+}
+
+async function loadPricingPlans() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/pricing`, {
+            headers: {
+                'x-auth-token': localStorage.getItem('token')
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            const pricingTableBody = document.getElementById('pricingTableBody');
+            pricingTableBody.innerHTML = '';
+
+            data.plans.forEach(plan => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${sanitizeHTML(plan.name)}</td>
+                    <td>${plan.price}</td>
+                    <td>
+                        <ul class="list-unstyled">
+                            ${plan.features.map(feature => 
+                                `<li>${sanitizeHTML(feature)}</li>`
+                            ).join('')}
+                        </ul>
+                    </td>
+                    <td>${sanitizeHTML(plan.buttonText)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary edit-pricing" 
+                                data-plan-id="${plan._id}">
+                            Edit
+                        </button>
+                    </td>
+                `;
+
+                pricingTableBody.appendChild(tr);
+
+                // Add event listener for edit button
+                const editBtn = tr.querySelector('.edit-pricing');
+                editBtn.addEventListener('click', () => editPricingPlan(plan));
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to load pricing plans');
+    }
+}
+
+function editPricingPlan(plan) {
+    const modalHtml = `
+        <div class="modal fade" id="editPricingModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Pricing Plan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editPricingForm">
+                            <div class="mb-3">
+                                <label class="form-label">Plan Name</label>
+                                <input type="text" class="form-control" id="planName" 
+                                       value="${sanitizeHTML(plan.name)}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Price (₸)</label>
+                                <input type="number" class="form-control" id="planPrice" 
+                                       value="${plan.price}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Features (one per line)</label>
+                                <textarea class="form-control" id="planFeatures" rows="4" required>
+                                    ${plan.features.join('\n')}
+                                </textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Button Text</label>
+                                <input type="text" class="form-control" id="buttonText" 
+                                       value="${sanitizeHTML(plan.buttonText)}">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary" id="savePricingChanges">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('editPricingModal'));
+    modal.show();
+
+    document.getElementById('savePricingChanges').addEventListener('click', async () => {
+        const updatedPlan = {
+            name: document.getElementById('planName').value,
+            price: Number(document.getElementById('planPrice').value),
+            features: document.getElementById('planFeatures').value
+                .split('\n')
+                .map(f => f.trim())
+                .filter(f => f),
+            buttonText: document.getElementById('buttonText').value
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/pricing/${plan._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-auth-token': localStorage.getItem('token')
+                },
+                body: JSON.stringify(updatedPlan)
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Pricing plan updated successfully');
+                modal.hide();
+                loadPricingPlans();
+            } else {
+                alert(data.message || 'Failed to update pricing plan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to update pricing plan');
+        }
+    });
+
+    document.getElementById('editPricingModal').addEventListener('hidden.bs.modal', function () {
+        this.remove();
+    });
 }

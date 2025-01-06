@@ -3,6 +3,7 @@ const Course = require('../models/Course');
 const bcrypt = require('bcryptjs');
 const Ticket = require('../models/Ticket');
 const TicketDone = require('../models/TicketsDone');
+const PricingPlan = require('../models/PricingPlan');
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
@@ -253,6 +254,34 @@ exports.completeTicket = async (req, res) => {
         await Ticket.findByIdAndDelete(req.params.id);
         
         res.json({ success: true, message: 'Ticket marked as completed' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.getPricingPlans = async (req, res) => {
+    try {
+        const plans = await PricingPlan.find();
+        res.json({ success: true, plans });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+exports.updatePricingPlan = async (req, res) => {
+    try {
+        const { name, price, features, buttonText } = req.body;
+        const plan = await PricingPlan.findByIdAndUpdate(
+            req.params.id,
+            { name, price, features, buttonText },
+            { new: true }
+        );
+        
+        if (!plan) {
+            return res.status(404).json({ success: false, message: 'Plan not found' });
+        }
+        
+        res.json({ success: true, plan });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

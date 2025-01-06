@@ -87,7 +87,6 @@ exports.getPerformanceData = async (req, res) => {
     }
 };
 
-
 // Get upcoming events
 exports.getUpcomingEvents = async (req, res) => {
     try {

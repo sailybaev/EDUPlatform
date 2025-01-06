@@ -39,4 +39,8 @@ router.put('/tickets/:id/reject', auth, checkAdmin, adminController.rejectTicket
 router.put('/tickets/:id/complete', auth, checkAdmin, adminController.completeTicket);
 router.post('/tickets/:id/respond', auth, checkAdmin, adminController.respondToTicket);
 
+// Add these new routes after existing routes
+router.get('/pricing', auth, checkAdmin, adminController.getPricingPlans);
+router.put('/pricing/:id', auth, checkAdmin, adminController.updatePricingPlan);
+
 module.exports = router;
