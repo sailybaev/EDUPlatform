@@ -18,6 +18,9 @@ const UserSchema = new mongoose.Schema({
     }], 
     createdAt: { type: Date, default: Date.now },
     who: { type: String, default: 'student' },
+    twoFactorSecret: { type: String },
+    twoFactorEnabled: { type: Boolean, default: false },
+    tempSecret: { type: String }
 });
 
 module.exports = mongoose.model('User', UserSchema);

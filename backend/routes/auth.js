@@ -11,4 +11,10 @@ router.post('/login', authController.login);
 // Check if registered
 router.get('/isRegistered', authController.isRegistered);
 
+// Verify 2FA
+router.post('/verify2fa', authController.verify2FA);
+
+// Verify 2FA login
+router.post('/verify2fa-login', authController.verify2FALogin);
+
 module.exports = router;
