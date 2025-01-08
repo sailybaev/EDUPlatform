@@ -298,3 +298,40 @@ img {
     from { opacity: 1; }
     to { opacity: 0; }
 }
+
+.modal {
+    color: #333;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+#otpCode {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    text-align: center;
+    width: 200px;
+    margin: 1rem auto;
+}
+
+.error-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #ff4444;
+    color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
