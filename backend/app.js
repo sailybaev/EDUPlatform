@@ -48,9 +48,17 @@ app.get('/pages/dashboard.html', auth, (req, res) => {
 // Redirect middleware
 app.use((req, res, next) => {
     if (req.path === '/') {
-        return res.redirect('/pages/home.html');
+        return res.redirect('/pages/home');
     }
     next();
+});
+
+app.use('/pages/:page', (req, res, next) => {
+    const page = req.params.page;
+    const filePath = path.join(__dirname, `../frontend/pages/${page}.html`);
+    res.sendFile(filePath, err => {
+        if (err) next();
+    });
 });
 
 // 404 handler
