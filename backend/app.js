@@ -53,6 +53,15 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use((req, res, next) => {
+    if (req.path.endsWith('.html')) {
+        const newPath = req.path.slice(0, -5);
+        return res.redirect(301, newPath);
+    }
+    next();
+});
+
+// Handle page routes without .html
 app.use('/pages/:page', (req, res, next) => {
     const page = req.params.page;
     const filePath = path.join(__dirname, `../frontend/pages/${page}.html`);
